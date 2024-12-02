@@ -1,14 +1,14 @@
 <template>
   <header class="header">
-    <img src="../assets/header-logo.png" />
+    <img src="../assets/header-logo.png" class="inline " />
     <nav class="header__nav">
-      <RouterLink class="header__nav__link" to="/">
+      <RouterLink :class="{ 'active__link': $route.path === '/' }" to="/">
         Home
       </RouterLink>
-      <RouterLink class="header__nav__link" to="/pokedex">
+      <RouterLink :class="{ 'active__link': $route.path === '/pokedex' }" to="/pokedex">
         Pokedex
       </RouterLink>
-      <RouterLink class="header__nav__link" to="/legendary">
+      <RouterLink :class="{ 'active__link': $route.path === '/legendary' }" to="/legendary">
         Legendary
       </RouterLink>
     </nav>
@@ -17,7 +17,12 @@
 
 <script>
 export default {
-  name: 'AppHeader'
+  name: 'AppHeader',
+  computed: {
+    navLink: function () {
+      return this.$route.path
+    }
+  }
 }
 </script>
 
@@ -45,7 +50,21 @@ export default {
   margin-top: 20px;
 }
 
-.header__nav__link {
+.header__nav a {
   text-decoration: none;
   color: #000;
-}</style>
+  position: relative;
+}
+
+.header__nav a.active__link::after {
+  content: '';
+  position: absolute;
+  top: 28px;
+  border: 1.5px solid;
+  width: 100%;
+  right: 0px;
+  left: 0;
+  border-radius: 20px;
+  transition: ease-in 0.2s;
+}
+</style>
