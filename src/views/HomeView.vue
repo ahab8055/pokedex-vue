@@ -1,6 +1,6 @@
 <template>
   <Layout>
-    <div class="main__wrapper flex flex-row">
+    <div class="main__wrapper flex flex-row justify-between">
       <div class="flex flex-col justify-center items-center w-1/2 px-40 gap-14">
         <p class="text-8xl font-light">
           <span class="font-semibold">Find</span> all your favorite
@@ -16,7 +16,9 @@
           See pokemons
         </button>
       </div>
-      <div></div>
+      <div>
+        <img src="../assets/banner.png" class="h-full w-full" alt="pokemon-banner"/>
+      </div>
     </div>
   </Layout>
 </template>
