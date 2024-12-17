@@ -7,10 +7,10 @@
                 stroke-width="2" stroke-dasharray="100" stroke-dashoffset="65" stroke-linecap="round"></circle>
         </svg>
         <div class="absolute top-1/2 start-1/2 transform -translate-y-1/2 -translate-x-1/2">
-            <span class="text-center text-xs font-bold text-blue-600 dark:text-blue-500">350</span>
+            <span class="text-center text-xs font-bold text-blue-600 dark:text-blue-500">{{ value }}</span>
         </div>
         <div class="">
-            <span class="text-center text-xs font-bold">{{ type }}</span>
+            <span class="text-center text-xs font-bold capitalize">{{ type }}</span>
         </div>
     </div>
 </template>
@@ -19,7 +19,8 @@
 export default {
     name: "CircularProgress",
     props: {
-        type: String
+        type: String,
+        value: Number
     }
 }
 </script>

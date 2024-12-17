@@ -5,19 +5,18 @@
                 <div class="flex h-full items-center justify-around flex-col">
                     <h4 class="capitalize text-lg font-bold">{{ pokemon.name }}</h4>
                     <div class="flex flex-row gap-2">
-                        <CircularProgress type="Attack" />
-                        <CircularProgress type="Defense" />
+                        <CircularProgress type="Attack" :value="stats.attack.base_stat" />
+                        <CircularProgress type="Defense" :value="stats.defense.base_stat" />
                     </div>
                     <div class="flex flex-row">
-                        <span
-                            class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">Default</span>
-                        <span
-                            class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">Red</span>
+                        <span v-for="type in types" :key="type.name"
+                            class="text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded capitalize"
+                            :style="{ backgroundColor: type.color }">{{ type.name }}</span>
                     </div>
                 </div>
             </div>
-            <div class="col-span-6 bg-[#71c558] w-52 h-40">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg"
+            <div class="col-span-6 w-52 h-40" :style="{ backgroundColor: colors[pokemon.types[0].type.name] }">
+                <img :src="pokemon.sprites.other.dream_world.front_default"
                     class="object-contain w-10/12 h-full float-right" />
             </div>
         </div>
@@ -25,7 +24,9 @@
 </template>
 
 <script>
+import { map } from 'lodash';
 import CircularProgress from './CircularProgress.vue';
+import { colors } from '@/constraints';
 export default {
     name: "PokeCardComponent",
     components: {
@@ -33,6 +34,21 @@ export default {
     },
     props: {
         pokemon: Object
-    }
+    },
+    data() {
+        return {
+            colors
+        }
+    },
+    computed: {
+        types() {
+            return map(this.pokemon.types, (type) => ({ name: type.type.name, color: colors[type.type.name] }));
+        },
+        stats() {
+            const attack = this.pokemon.stats.find(stat => stat.stat.name === 'attack');
+            const defense = this.pokemon.stats.find(stat => stat.stat.name === 'defense');
+            return { attack, defense }
+        }
+    },
 };
 </script>
