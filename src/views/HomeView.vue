@@ -12,12 +12,12 @@
         </p>
         <button
           class="self-baseline bg-[#73D677] text-[#212121] px-4 py-3 rounded-lg shadow text-xl hover:scale-105 ease-in duration-200 font-semibold"
-        >
+          @click="$router.push('/pokedex')">
           See pokemons
         </button>
       </div>
       <div>
-        <img src="../assets/banner.png" class="h-full w-full" alt="pokemon-banner"/>
+        <img src="../assets/banner.png" class="h-full w-full" alt="pokemon-banner" />
       </div>
     </div>
   </Layout>

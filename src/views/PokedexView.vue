@@ -27,7 +27,7 @@
       <div class="flex gap-2 flex-wrap w-[65%] items-center justify-center" v-if="loading">
         <CardSkelton v-for="index in 9" :key="index" />
       </div>
-      <Pagination />
+      <Pagination v-if="!loading" :data="pagination" @prev="prevPage" @next="nextPage" />
     </div>
   </Layout>
 </template>
@@ -48,12 +48,18 @@ export default {
   },
   data() {
     return {
-      loading: true
+      loading: true,
+      limit: 9,
+      offset: 0
     }
   },
   watch: {
     pokemons() {
       this.loading = false
+    },
+    offset() {
+      this.loading = true
+      this.$store.dispatch("fetchPokemons", { limit: this.limit, offset: this.offset });
     }
   },
   computed: {
@@ -68,10 +74,21 @@ export default {
     },
     growths() {
       return this.$store.state.growths
+    },
+    pagination() {
+      return this.$store.state.pagination
+    },
+  },
+  methods: {
+    nextPage() {
+      this.offset += this.limit;
+    },
+    prevPage() {
+      this.offset -= this.limit;
     }
   },
   async mounted() {
-    this.$store.dispatch("fetchPokemons");
+    this.$store.dispatch("fetchPokemons", { limit: this.limit, offset: this.offset });
     this.$store.dispatch("fetchPokemonTypes");
     this.$store.dispatch("fetchPokemonNature");
     this.$store.dispatch("fetchPokemonGrowth");

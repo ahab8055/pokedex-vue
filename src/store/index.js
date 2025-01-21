@@ -10,20 +10,35 @@ const store = createStore({
     types: [],
     natures: [],
     growths: [],
+    pagination: {
+      next: null,
+      previous: null,
+      count: 0,
+    },
   },
   getters: {},
   actions: {
-    async fetchPokemons({ commit }) {
+    async fetchPokemons({ commit }, payload) {
       try {
-        const { data } = await instance.get("pokemon?limit=9");
+        const { data } = await instance.get("pokemon", {
+          params: {
+            limit: payload.limit,
+            offset: payload.offset,
+          },
+        });
+        const paginationData = {
+          next: data.next,
+          previous: data.previous,
+          count: data.count,
+        };
         const pokemonsApis = map(data.results, (pokemon) => {
-          console.log(pokemon);
           const url = pokemon.url;
           return axios.get(url);
         });
         const responses = await axios.all(pokemonsApis);
         const resultData = map(responses, (response) => response.data);
         commit("SET_POKEMONS", resultData);
+        commit("SET_PAGINATION", paginationData);
       } catch (error) {
         console.log(error);
       }
@@ -65,6 +80,9 @@ const store = createStore({
     },
     SET_GROWTHS(state, growths) {
       state.growths = growths;
+    },
+    SET_PAGINATION(state, pagination) {
+      state.pagination = pagination;
     },
   },
 });
