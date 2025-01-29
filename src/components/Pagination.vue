@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-col items-center">
         <span class="text-sm text-gray-700">
-            Showing <span class="font-semibold text-gray-900">1</span> to <span
-                class="font-semibold text-gray-900">{{ data.limit }}</span> of <span class="font-semibold text-gray-900">{{ data.count }}</span>
+            Showing <span class="font-semibold text-gray-900">{{ data.from + 1 }}</span> to <span
+                class="font-semibold text-gray-900">{{ data.from + data.limit }}</span> of <span class="font-semibold text-gray-900">{{ data.count }}</span>
             Entries
         </span>
         <div class="inline-flex mt-2 xs:mt-0">

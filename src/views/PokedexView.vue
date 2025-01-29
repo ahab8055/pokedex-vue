@@ -76,7 +76,8 @@ export default {
       return this.$store.state.growths
     },
     pagination() {
-      return this.$store.state.pagination
+      console.log(this.$store.state.pagination, this.offset, this.limit)
+      return { ...this.$store.state.pagination, from: this.offset, limit: this.limit }
     },
   },
   methods: {
