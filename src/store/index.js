@@ -8,7 +8,6 @@ const store = createStore({
   state: {
     pokemons: [],
     types: [],
-    natures: [],
     growths: [],
     pagination: {
       next: null,
@@ -20,24 +19,54 @@ const store = createStore({
   actions: {
     async fetchPokemons({ commit }, payload) {
       try {
-        const { data } = await instance.get("pokemon", {
-          params: {
-            limit: payload.limit,
-            offset: payload.offset,
-          },
-        });
-        const paginationData = {
-          next: data.next,
-          previous: data.previous,
-          count: data.count,
+        let paginationData = { next: null, previous: null, count: 0 };
+        let filteredPokemon = [];
+
+        // Get the base pokemon list based on type or growth filter
+        if (payload.type) {
+          const { data } = await instance.get(`type/${payload.type}`);
+          filteredPokemon = map(data.pokemon, (p) => p.pokemon);
+        } else if (payload.growth) {
+          const { data } = await instance.get(`growth-rate/${payload.growth}`);
+          const allSpecies = data.pokemon_species;
+          filteredPokemon = map(allSpecies, (s) => ({
+            name: s.name,
+            url: s.url.replace("pokemon-species", "pokemon"),
+          }));
+        } else {
+          // Fetch all pokemon with a large limit for search capability
+          const { data } = await instance.get("pokemon", {
+            params: {
+              limit: 1000,
+              offset: 0,
+            },
+          });
+          filteredPokemon = data.results;
+        }
+
+        // Apply search filter by name
+        if (payload.search) {
+          filteredPokemon = filteredPokemon.filter((p) =>
+            p.name.toLowerCase().includes(payload.search.toLowerCase())
+          );
+        }
+
+        const total = filteredPokemon.length;
+        const sliced = filteredPokemon.slice(
+          payload.offset,
+          payload.offset + payload.limit
+        );
+
+        paginationData = {
+          count: total,
+          next: payload.offset + payload.limit < total ? "next" : null,
+          previous: payload.offset > 0 ? "prev" : null,
         };
-        const pokemonsApis = map(data.results, (pokemon) => {
-          const url = pokemon.url;
-          return axios.get(url);
-        });
-        const responses = await axios.all(pokemonsApis);
-        const resultData = map(responses, (response) => response.data);
-        commit("SET_POKEMONS", resultData);
+
+        const responses = await axios.all(
+          map(sliced, (p) => axios.get(p.url))
+        );
+        commit("SET_POKEMONS", map(responses, (r) => r.data));
         commit("SET_PAGINATION", paginationData);
       } catch (error) {
         console.log(error);
@@ -47,14 +76,6 @@ const store = createStore({
       try {
         const { data } = await instance.get("type?limit=30");
         commit("SET_TYPES", data.results);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async fetchPokemonNature({ commit }) {
-      try {
-        const { data } = await instance.get("nature/?limit=30");
-        commit("SET_NATURES", data.results);
       } catch (error) {
         console.log(error);
       }
@@ -74,9 +95,6 @@ const store = createStore({
     },
     SET_TYPES(state, types) {
       state.types = types;
-    },
-    SET_NATURES(state, natures) {
-      state.natures = natures;
     },
     SET_GROWTHS(state, growths) {
       state.growths = growths;

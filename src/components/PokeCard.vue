@@ -1,5 +1,5 @@
 <template>
-    <a href="#" class="block max-w-sm bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+    <button @click="openDetails" class="block max-w-sm bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 cursor-pointer w-full text-left">
         <div class="grid grid-cols-10">
             <div class="col-span-4">
                 <div class="flex h-full items-center justify-around flex-col">
@@ -20,7 +20,7 @@
                     class="object-contain w-10/12 h-full float-right" />
             </div>
         </div>
-    </a>
+    </button>
 </template>
 
 <script>
@@ -50,5 +50,10 @@ export default {
             return { attack, defense }
         }
     },
+    methods: {
+        openDetails() {
+            this.$emit('pokemon-selected', this.pokemon);
+        }
+    }
 };
 </script>
